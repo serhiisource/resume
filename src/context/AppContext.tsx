@@ -16,9 +16,14 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
+export type ThemeMode = "dark" | "light";
+
 interface AppContextType {
   lang: Language;
   switchLanguage: (newLang: Language) => void;
+  theme: ThemeMode;
+  toggleTheme: () => void;
+  setTheme: (mode: ThemeMode) => void;
   isTransitioning: boolean;
   scrollVelocity: number;
   lenisRef: React.MutableRefObject<Lenis | null>;
@@ -38,11 +43,56 @@ export function useApp() {
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const [lang, setLang] = useState<Language>("de");
+  const [theme, setThemeState] = useState<ThemeMode>("dark");
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [scrollVelocity, setScrollVelocity] = useState(0);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [preloaderDone, setPreloaderDone] = useState(false);
   const lenisRef = useRef<Lenis | null>(null);
+
+  /* ───── Sync Theme Class on <html> ───── */
+  useEffect(() => {
+    const saved = window.localStorage.getItem("sr-theme") as ThemeMode | null;
+    const initial: ThemeMode = saved === "light" ? "light" : "dark";
+    setThemeState(initial);
+    const root = document.documentElement;
+    if (initial === "dark") {
+      root.classList.add("dark");
+      root.classList.remove("light");
+    } else {
+      root.classList.remove("dark");
+      root.classList.add("light");
+    }
+  }, []);
+
+  const setTheme = useCallback((mode: ThemeMode) => {
+    setThemeState(mode);
+    window.localStorage.setItem("sr-theme", mode);
+    const root = document.documentElement;
+    if (mode === "dark") {
+      root.classList.add("dark");
+      root.classList.remove("light");
+    } else {
+      root.classList.remove("dark");
+      root.classList.add("light");
+    }
+  }, []);
+
+  const toggleTheme = useCallback(() => {
+    setThemeState((prev) => {
+      const next: ThemeMode = prev === "dark" ? "light" : "dark";
+      window.localStorage.setItem("sr-theme", next);
+      const root = document.documentElement;
+      if (next === "dark") {
+        root.classList.add("dark");
+        root.classList.remove("light");
+      } else {
+        root.classList.remove("dark");
+        root.classList.add("light");
+      }
+      return next;
+    });
+  }, []);
 
   /* ───── Lenis smooth scroll ───── */
   useEffect(() => {
@@ -92,15 +142,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
     (newLang: Language) => {
       if (newLang === lang || isTransitioning) return;
       setIsTransitioning(true);
-      // After 350ms (curtain covers screen), swap lang
       setTimeout(() => {
         setLang(newLang);
-        // After another 100ms, refresh ScrollTrigger and dismiss curtain
         setTimeout(() => {
           ScrollTrigger.refresh(true);
           setIsTransitioning(false);
         }, 100);
-      }, 350);
+      }, 280);
     },
     [lang, isTransitioning]
   );
@@ -110,6 +158,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
       value={{
         lang,
         switchLanguage,
+        theme,
+        toggleTheme,
+        setTheme,
         isTransitioning,
         scrollVelocity,
         lenisRef,

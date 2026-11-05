@@ -1,195 +1,185 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { useApp } from "@/context/AppContext";
 import { CV_DATA } from "@/data/cvData";
 import {
   ArrowUpRight,
   Mail,
-  MapPin,
-  Sparkles,
   ChevronRight,
-  Code2,
+  Activity,
   Cpu,
   Layers,
-  Milestone,
+  ShieldCheck,
 } from "lucide-react";
+import gsap from "gsap";
+import LiquidGlassCard from "@/components/LiquidGlassCard";
+import MagneticButton from "@/components/MagneticButton";
 
 export default function HeroSection() {
   const { lang, setIsDrawerOpen } = useApp();
   const t = CV_DATA[lang];
+  const heroRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    if (!heroRef.current) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        ".kinetic-word",
+        { yPercent: 105, opacity: 0 },
+        {
+          yPercent: 0,
+          opacity: 1,
+          duration: 0.7,
+          stagger: 0.05,
+          ease: "power3.out",
+        }
+      );
+
+      gsap.fromTo(
+        ".hero-metric-card",
+        { y: 24, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.7,
+          stagger: 0.08,
+          ease: "power3.out",
+          delay: 0.12,
+        }
+      );
+    }, heroRef);
+
+    return () => ctx.revert();
+  }, [lang]);
 
   const scrollTo = (id: string) => {
     const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: "smooth" });
   };
 
+  const formatCleanLabel = (raw: string) => raw.replace(/\s*\/\/\s*/g, " · ");
+
+  const icons = [Activity, Layers, Cpu, ShieldCheck];
+
   return (
-    <section id="intro" className="relative pt-32 pb-20 px-5 sm:px-8 max-w-7xl mx-auto z-10">
-      {/* 1. TOP HERO BADGE & TITLE */}
-      <div className="max-w-4xl space-y-6">
-        <div className="inline-flex items-center gap-2 bg-accent/10 border border-accent/25 text-accent text-xs font-semibold px-3 py-1 rounded-full">
-          <Sparkles size={13} />
-          <span>{t.hero.badge}</span>
+    <section
+      ref={heroRef}
+      id="intro"
+      className="relative pt-28 sm:pt-36 pb-16 px-5 sm:px-8 max-w-7xl mx-auto z-10"
+    >
+      {/* Top Status Kicker */}
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-7">
+        <div className="inline-flex flex-wrap items-center gap-2.5 text-xs font-mono">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-black/5 dark:bg-white/[0.06] border border-black/10 dark:border-white/10 text-accent font-semibold tracking-wider uppercase">
+            <span className="h-1.5 w-1.5 rounded-full bg-accent" aria-hidden="true" />
+            <span>{formatCleanLabel(t.hero.badge)}</span>
+          </span>
+          <span className="text-zinc-500 dark:text-zinc-400">
+            {t.meta.locationShort}
+          </span>
         </div>
 
-        <div className="space-y-3">
-          <h1 className="text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight text-white">
-            {t.hero.name}
-          </h1>
-          <p className="text-xl sm:text-2xl text-zinc-300 font-medium tracking-tight">
-            {t.hero.roles}
-          </p>
-        </div>
-
-        <p className="text-base sm:text-lg text-zinc-400 font-normal leading-relaxed max-w-3xl">
-          {t.hero.lead}
-        </p>
-
-        {/* Action Buttons */}
-        <div className="pt-2 flex flex-wrap items-center gap-3">
-          <a
-            href="https://arbfeld.github.io/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-accent inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold transition-all"
-          >
-            <span>{t.hero.primaryCta}</span>
-            <ArrowUpRight size={16} />
-          </a>
-
-          <button
-            onClick={() => setIsDrawerOpen(true)}
-            className="inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium text-white bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.08] hover:border-white/[0.18] transition-all"
-          >
-            <Mail size={16} />
-            <span>{t.hero.secondaryCta}</span>
-          </button>
-
-          <button
-            onClick={() => scrollTo("cv")}
-            className="inline-flex items-center gap-1.5 px-4 py-3 text-sm text-zinc-400 hover:text-white transition-colors"
-          >
-            <span>Lebenslauf / CV</span>
-            <ChevronRight size={16} />
-          </button>
+        <div className="text-xs font-mono text-zinc-500 dark:text-zinc-400 hidden sm:flex items-center gap-2">
+          <span className="text-accent font-semibold">● LIVE</span>
+          <span>ARBFELD.GITHUB.IO</span>
         </div>
       </div>
 
-      {/* 2. BENTO DOSSIER: WHO I AM + STACK + PATH */}
-      <div className="mt-16 grid grid-cols-1 md:grid-cols-12 gap-5">
-        {/* Card 1: Identity & Profile (4 cols) */}
-        <div className="md:col-span-4 glass-card rounded-2xl p-6 flex flex-col justify-between">
-          <div className="space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-white/[0.06]">
-              <span className="text-xs font-semibold text-white uppercase tracking-wider flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-accent" />
-                {t.hero.dossierTitle}
+      {/* Main Kinetic Display Headline & Editorial Lead */}
+      <div className="max-w-5xl space-y-6">
+        <div className="space-y-3">
+          <h1
+            className="text-5xl sm:text-7xl lg:text-8xl font-extrabold tracking-tight text-zinc-950 dark:text-white leading-[1.02]"
+            style={{ textWrap: "balance" }}
+          >
+            {t.hero.name.split(" ").map((word, idx) => (
+              <span
+                key={idx}
+                className="inline-block overflow-hidden mr-4 pb-1 align-bottom"
+              >
+                <span className="kinetic-word inline-block will-change-transform">
+                  {word}
+                </span>
               </span>
-              <span className="text-[11px] text-zinc-500 font-mono">2026</span>
-            </div>
+            ))}
+          </h1>
 
-            <div className="space-y-3 text-xs">
-              {t.hero.profileMeta.map((item, idx) => (
-                <div
-                  key={idx}
-                  className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 border-b border-white/[0.04] pb-2 last:border-0"
-                >
-                  <span className="text-zinc-500 font-mono text-[11px]">{item.label}</span>
+          <p className="text-lg sm:text-2xl text-zinc-800 dark:text-zinc-200 font-semibold tracking-tight">
+            <span>{t.hero.roles}</span>
+          </p>
+        </div>
+
+        <p className="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 font-normal leading-relaxed max-w-3xl">
+          {t.hero.lead}
+        </p>
+
+        {/* Magnetic Action Controls: Green Primary + Red Secondary + Monochrome CV Anchor */}
+        <div className="pt-2 flex flex-wrap items-center gap-3.5">
+          <MagneticButton
+            href="https://arbfeld.github.io/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-accent px-6 py-3.5 rounded-xl text-sm font-semibold"
+          >
+            <span>{t.hero.primaryCta}</span>
+            <ArrowUpRight size={16} />
+          </MagneticButton>
+
+          <MagneticButton
+            onClick={() => setIsDrawerOpen(true)}
+            className="btn-accent-red px-6 py-3.5 rounded-xl text-sm font-semibold"
+          >
+            <Mail size={16} />
+            <span>{t.hero.secondaryCta}</span>
+          </MagneticButton>
+
+          <MagneticButton
+            onClick={() => scrollTo("showcase")}
+            strength={0.22}
+            className="liquid-glass-nav px-5 py-3.5 rounded-xl text-sm font-medium text-zinc-900 dark:text-white hover:border-black/30 dark:hover:border-white/35 transition-colors"
+          >
+            <span>{t.nav.showcase}</span>
+            <ChevronRight size={16} className="text-accent" />
+          </MagneticButton>
+        </div>
+      </div>
+
+      {/* Streamlined 4-Column Quantitative Architecture Bar */}
+      <div className="mt-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {t.whyMe.stats.map((stat, i) => {
+          const Icon = icons[i % icons.length];
+          const isRed = i % 2 === 1;
+          return (
+            <div key={i} className="hero-metric-card">
+              <LiquidGlassCard
+                glowVariant={isRed ? "crimson" : "emerald"}
+                maxTilt={4.5}
+                className="h-full p-5 sm:p-6"
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-3xl sm:text-4xl font-extrabold tracking-tight font-mono tabular-nums text-zinc-950 dark:text-white">
+                    {stat.number}
+                  </span>
                   <span
-                    className={`font-medium text-right ${
-                      item.highlight ? "text-accent font-semibold" : "text-zinc-200"
+                    className={`flex h-8 w-8 items-center justify-center rounded-lg border ${
+                      isRed
+                        ? "border-red-500/25 bg-red-500/10 text-accentRed"
+                        : "border-emerald-500/25 bg-emerald-500/10 text-accent"
                     }`}
                   >
-                    {item.value}
+                    <Icon size={15} />
                   </span>
                 </div>
-              ))}
+                <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-snug">
+                  {stat.label}
+                </p>
+              </LiquidGlassCard>
             </div>
-          </div>
-
-          <div className="mt-6 pt-4 border-t border-white/[0.06] flex items-center justify-between text-[11px] text-zinc-500 font-mono">
-            <span>RESIDENCY</span>
-            <span className="text-emerald-400 font-medium">Bavaria / Munich Area</span>
-          </div>
-        </div>
-
-        {/* Card 2: Core Engineering Stack (4 cols) */}
-        <div className="md:col-span-4 glass-card rounded-2xl p-6 flex flex-col justify-between">
-          <div>
-            <div className="flex items-center justify-between pb-3 border-b border-white/[0.06] mb-4">
-              <span className="text-xs font-semibold text-white uppercase tracking-wider flex items-center gap-2">
-                <Cpu size={14} className="text-accent" />
-                {t.hero.skillsTitle}
-              </span>
-              <span className="text-[11px] text-zinc-500 font-mono">CORE CAPABILITIES</span>
-            </div>
-
-            <p className="text-xs text-zinc-400 mb-4 leading-relaxed">
-              Specialized in autonomous AI agents, multi-agent pipelines, low-latency edge systems,
-              and full-stack execution.
-            </p>
-
-            <div className="flex flex-wrap gap-1.5">
-              {t.hero.coreSkillChips.map((chip, i) => (
-                <span
-                  key={i}
-                  className="text-xs bg-white/[0.04] border border-white/[0.07] px-2.5 py-1 rounded-lg text-zinc-300 hover:text-white hover:border-white/20 transition-all cursor-default"
-                >
-                  {chip}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          <div className="mt-6 pt-4 border-t border-white/[0.06] text-[11px] text-zinc-500 font-mono flex items-center justify-between">
-            <span>STACK</span>
-            <span className="text-zinc-300 font-medium">Python · Docker · Next.js · TS</span>
-          </div>
-        </div>
-
-        {/* Card 3: The Journey / Story (4 cols) */}
-        <div className="md:col-span-4 glass-card rounded-2xl p-6 flex flex-col justify-between">
-          <div>
-            <div className="flex items-center justify-between pb-3 border-b border-white/[0.06] mb-4">
-              <span className="text-xs font-semibold text-white uppercase tracking-wider flex items-center gap-2">
-                <Milestone size={14} className="text-accent" />
-                {t.hero.journeyTitle}
-              </span>
-              <span className="text-[11px] text-accent font-mono font-medium">
-                {t.hero.journeyBadge}
-              </span>
-            </div>
-
-            <div className="space-y-3.5">
-              {t.hero.journeyMilestones.map((m, i) => (
-                <div key={i} className="group/item relative pl-3.5 border-l border-zinc-800 hover:border-accent transition-colors">
-                  <div className="flex items-center justify-between text-[11px] font-mono mb-0.5">
-                    <span className="text-accent font-semibold">{m.year}</span>
-                    <span className="text-zinc-500 text-[10px] uppercase bg-white/[0.03] px-1.5 py-0.5 rounded border border-white/[0.05]">
-                      {m.tag}
-                    </span>
-                  </div>
-                  <div className="text-xs font-semibold text-zinc-200 group-hover/item:text-white transition-colors">
-                    {m.role}
-                  </div>
-                  <div className="text-[11px] text-zinc-400 leading-snug mt-0.5">
-                    {m.desc}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="mt-6 pt-4 border-t border-white/[0.06] text-[11px] text-zinc-500 font-mono flex items-center justify-between">
-            <span>CAREER</span>
-            <button
-              onClick={() => scrollTo("cv")}
-              className="text-white hover:text-accent font-medium transition-colors"
-            >
-              Full Timeline ▹
-            </button>
-          </div>
-        </div>
+          );
+        })}
       </div>
     </section>
   );

@@ -1,11 +1,29 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Manrope, Cormorant_Garamond, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { AppProvider } from "@/context/AppContext";
+import AmbientBackground from "@/components/AmbientBackground";
+import CustomCursor from "@/components/CustomCursor";
 
-const inter = Inter({
+const manrope = Manrope({
   subsets: ["latin", "cyrillic"],
-  variable: "--font-inter",
+  variable: "--font-manrope",
+  weight: ["400", "500", "600", "700", "800"],
+  display: "swap",
+});
+
+const cormorant = Cormorant_Garamond({
+  subsets: ["latin", "cyrillic"],
+  variable: "--font-cormorant",
+  weight: ["600", "700"],
+  style: ["normal", "italic"],
+  display: "swap",
+});
+
+const jetbrains = JetBrains_Mono({
+  subsets: ["latin", "cyrillic"],
+  variable: "--font-jetbrains",
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
@@ -29,10 +47,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="de" className={inter.variable}>
-      <body className="bg-obsidian text-offwhite antialiased font-sans bg-grid min-h-screen">
-        {/* Soft Ambient Glow in background */}
-        <div className="ambient-glow" />
+    <html
+      lang="de"
+      className={`dark ${manrope.variable} ${cormorant.variable} ${jetbrains.variable}`}
+      suppressHydrationWarning
+    >
+      <body className="bg-obsidian text-offwhite antialiased font-sans min-h-screen relative transition-colors duration-500">
+        <AmbientBackground />
+        <CustomCursor />
         <AppProvider>{children}</AppProvider>
       </body>
     </html>

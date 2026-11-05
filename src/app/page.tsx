@@ -1,53 +1,37 @@
-import Preloader from "@/components/Preloader";
 import PixelCurtain from "@/components/PixelCurtain";
 import Header from "@/components/Header";
-import FloatingNav from "@/components/FloatingNav";
 import HeroSection from "@/components/HeroSection";
-import ProblemSection from "@/components/ProblemSection";
 import Showcase3DSection from "@/components/Showcase3DSection";
-import SolutionSection from "@/components/SolutionSection";
+import ProblemSection from "@/components/ProblemSection";
 import LebenslaufSection from "@/components/LebenslaufSection";
-import WhyMeSection from "@/components/WhyMeSection";
 import FooterSection from "@/components/FooterSection";
 import ContactDrawer from "@/components/ContactDrawer";
 
 export default function Home() {
   return (
-    <main className="relative min-h-screen bg-obsidian text-offwhite selection:bg-gpRed selection:text-obsidian overflow-x-hidden">
-      {/* 1. Preloader with count 000% - 100% and 60-tile dissolve */}
-      <Preloader />
-
-      {/* 2. Pixel Curtain Language Switcher overlay */}
+    <main className="relative z-10 min-h-screen bg-transparent text-offwhite selection:bg-emerald-400 selection:text-zinc-950 overflow-x-hidden">
+      {/* Language Switcher Transition Veil */}
       <PixelCurtain />
 
-      {/* 3. Global Fixed Header with language selector and drawer trigger */}
+      {/* Unified Fixed Architectural Header (Nav + Language + Theme + Contact + Scroll Progress) */}
       <Header />
 
-      {/* 5. Floating Bottom Navigation Pill */}
-      <FloatingNav />
-
-      {/* 6. Hero Section */}
+      {/* 00 // Hero Section & Quantitative Telemetry Strip */}
       <HeroSection />
 
-      {/* 7. Problem Section (01 // DAS PROBLEM) with word illumination & tilted cards */}
-      <ProblemSection />
-
-      {/* 8. 3D Project Showcase (02 // 3D-PROJEKT-SEQUENZ) with Arbfeld Live Terminal */}
+      {/* 01 // Flagship Arbfeld Interactive L2 Order-Book Engine & Core Systems */}
       <Showcase3DSection />
 
-      {/* 9. Solution Section (03 // DIE LÖSUNG) with 001-012 interactive list */}
-      <SolutionSection />
+      {/* 02 // Engineering Pillars & Architecture Matrix */}
+      <ProblemSection />
 
-      {/* 10. Official Lebenslauf / CV Timeline (04 // OFFIZIELLER LEBENSLAUF) */}
+      {/* 03 // Official Executive Lebenslauf (CV) & Collaboration Formats */}
       <LebenslaufSection />
 
-      {/* 11. Why Me & Formats (05 // WARUM ICH) */}
-      <WhyMeSection />
-
-      {/* 12. Monumental Footer (06 // STARTEN WIR) */}
+      {/* 04 // Monumental Closing CTA */}
       <FooterSection />
 
-      {/* 13. Slide-over Contact Drawer */}
+      {/* Slide-Over Contact Drawer */}
       <ContactDrawer />
     </main>
   );
